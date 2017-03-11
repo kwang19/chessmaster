@@ -1,4 +1,21 @@
 Rails.application.routes.draw do
+  # Routes for the Gamerating resource:
+  # CREATE
+  get "/gameratings/new", :controller => "gameratings", :action => "new"
+  post "/create_gamerating", :controller => "gameratings", :action => "create"
+
+  # READ
+  get "/gameratings", :controller => "gameratings", :action => "index"
+  get "/gameratings/:id", :controller => "gameratings", :action => "show"
+
+  # UPDATE
+  get "/gameratings/:id/edit", :controller => "gameratings", :action => "edit"
+  post "/update_gamerating/:id", :controller => "gameratings", :action => "update"
+
+  # DELETE
+  get "/delete_gamerating/:id", :controller => "gameratings", :action => "destroy"
+  #------------------------------
+
   # Routes for the Comment resource:
   # CREATE
   get "/comments/new", :controller => "comments", :action => "new"

@@ -1,0 +1,31 @@
+<div class="page-header">
+  <h3>Gamerating #<%= @gamerating.id %></h3>
+</div>
+
+<div class="row">
+  <div class="col-md-12 mb-2">
+    <dl class="dl-horizontal">
+      <dt>User</dt>
+      <dd><%= @gamerating.user_id %></dd>
+
+      <dt>Value</dt>
+      <dd><%= @gamerating.value %></dd>
+
+      <dt>Game</dt>
+      <dd><%= @gamerating.game_id %></dd>
+
+    </dl>
+
+    <div class="btn-group btn-group-justified">
+      <a href="/gameratings" class="btn btn-primary">
+        Back
+      </a>
+      <a href="/gameratings/<%= @gamerating.id %>/edit" class="btn btn-warning">
+        Edit
+      </a>
+      <a href="/delete_gamerating/<%= @gamerating.id %>" class="btn btn-danger" rel="nofollow">
+        Delete
+      </a>
+    </div>
+  </div>
+</div>
