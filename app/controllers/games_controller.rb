@@ -1,4 +1,14 @@
 class GamesController < ApplicationController
+  before_action :current_user_must_be_game_user, :only => [:edit, :update, :destroy]
+
+  def current_user_must_be_game_user
+    game = Game.find(params[:id])
+
+    unless current_user == game.user
+      redirect_to :back, :alert => "You are not authorized for that."
+    end
+  end
+
   def index
     @games = Game.all
 

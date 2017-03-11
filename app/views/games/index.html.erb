@@ -30,8 +30,11 @@
         <td><%= game.result %></td>
         <td>
           <a href="/games/<%= game.id %>" class="btn btn-primary">Show</a>
-          <a href="/games/<%= game.id %>/edit" class="btn btn-warning">Edit</a>
-          <a href="/delete_game/<%= game.id %>" class="btn btn-danger" rel="nofollow">Delete</a>
+          
+          <% if current_user == game.user %>
+            <a href="/games/<%= game.id %>/edit" class="btn btn-warning">Edit</a>
+            <a href="/delete_game/<%= game.id %>" class="btn btn-danger" rel="nofollow">Delete</a>
+          <% end %>
         </td>
       </tr>
       <% end %>
