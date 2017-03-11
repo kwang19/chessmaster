@@ -15,6 +15,10 @@ class User < ApplicationRecord
 
   # Indirect associations
 
+  has_many   :commented_games,
+             :through => :comments,
+             :source => :game
+
   has_many   :liked_games,
              :through => :likes,
              :source => :game

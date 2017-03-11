@@ -14,6 +14,10 @@ class Game < ApplicationRecord
 
   # Indirect associations
 
+  has_many   :commenters,
+             :through => :comments,
+             :source => :user
+
   has_many   :fans,
              :through => :likes,
              :source => :user
