@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  root :to => "games#index"
   # Routes for the Gamerating resource:
   # CREATE
   get "/gameratings/new", :controller => "gameratings", :action => "new"
