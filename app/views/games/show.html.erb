@@ -1,0 +1,43 @@
+<div class="page-header">
+  <h3>Game #<%= @game.id %></h3>
+</div>
+
+<div class="row">
+  <div class="col-md-12 mb-2">
+    <dl class="dl-horizontal">
+      <dt>Pgn</dt>
+      <dd><%= @game.pgn %></dd>
+
+      <dt>User</dt>
+      <dd><%= @game.user_id %></dd>
+
+      <dt>Eventname</dt>
+      <dd><%= @game.eventname %></dd>
+
+      <dt>Eventdate</dt>
+      <dd><%= @game.eventdate %></dd>
+
+      <dt>White</dt>
+      <dd><%= @game.white %></dd>
+
+      <dt>Black</dt>
+      <dd><%= @game.black %></dd>
+
+      <dt>Result</dt>
+      <dd><%= @game.result %></dd>
+
+    </dl>
+
+    <div class="btn-group btn-group-justified">
+      <a href="/games" class="btn btn-primary">
+        Back
+      </a>
+      <a href="/games/<%= @game.id %>/edit" class="btn btn-warning">
+        Edit
+      </a>
+      <a href="/delete_game/<%= @game.id %>" class="btn btn-danger" rel="nofollow">
+        Delete
+      </a>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,91 @@
+<!-- Validation failure messages -->
+<% if @game.errors.any? %>
+  <% @game.errors.full_messages.each do |message| %>
+    <div class="alert alert-dismissable alert-danger">
+      <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+      <%= message %>
+    </div>
+  <% end %>
+<% end %>
+
+<div class="page-header">
+  <h3>Edit Game #<%= @game.id %></h3>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+    <form action="/update_game/<%= @game.id %>" method="post">
+      <!-- Hidden input for authenticity token to protect from forgery -->
+      <input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>">
+
+      <!-- Label and input for pgn -->
+      <div class="form-group">
+        <label for="pgn" class="control-label">
+          Pgn
+        </label>
+
+        <textarea id="pgn" name="pgn" placeholder="Pgn" class="form-control" rows="3"><%= @game.pgn %></textarea>
+      </div>
+
+      <!-- Label and input for user_id -->
+      <div class="form-group">
+        <label for="user_id" class="control-label">
+          User
+        </label>
+
+        <input type="text" id="user_id" name="user_id" placeholder="User" class="form-control" value="<%= @game.user_id %>">
+      </div>
+
+      <!-- Label and input for eventname -->
+      <div class="form-group">
+        <label for="eventname" class="control-label">
+          Eventname
+        </label>
+
+        <input type="text" id="eventname" name="eventname" placeholder="Eventname" class="form-control" value="<%= @game.eventname %>">
+      </div>
+
+      <!-- Label and input for eventdate -->
+      <div class="form-group">
+        <label for="eventdate" class="control-label">
+          Eventdate
+        </label>
+
+        <input type="text" id="eventdate" name="eventdate" placeholder="Eventdate" class="form-control" value="<%= @game.eventdate %>">
+      </div>
+
+      <!-- Label and input for white -->
+      <div class="form-group">
+        <label for="white" class="control-label">
+          White
+        </label>
+
+        <input type="text" id="white" name="white" placeholder="White" class="form-control" value="<%= @game.white %>">
+      </div>
+
+      <!-- Label and input for black -->
+      <div class="form-group">
+        <label for="black" class="control-label">
+          Black
+        </label>
+
+        <input type="text" id="black" name="black" placeholder="Black" class="form-control" value="<%= @game.black %>">
+      </div>
+
+      <!-- Label and input for result -->
+      <div class="form-group">
+        <label for="result" class="control-label">
+          Result
+        </label>
+
+        <input type="text" id="result" name="result" placeholder="Result" class="form-control" value="<%= @game.result %>">
+      </div>
+
+      <button class="btn btn-warning">
+        Update Game
+      </button>
+      or
+      <a href="/games/<%= @game.id %>">Cancel</a>
+    </form>
+  </div>
+</div>
