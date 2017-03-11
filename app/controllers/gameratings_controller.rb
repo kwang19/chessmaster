@@ -48,8 +48,6 @@ class GameratingsController < ApplicationController
 
   def update
     @gamerating = Gamerating.find(params[:id])
-
-    @gamerating.user_id = params[:user_id]
     @gamerating.value = params[:value]
     @gamerating.game_id = params[:game_id]
 
