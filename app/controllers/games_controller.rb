@@ -16,6 +16,9 @@ class GamesController < ApplicationController
   end
 
   def show
+    @like = Like.new
+    @gamerating = Gamerating.new
+    @comment = Comment.new
     @game = Game.find(params[:id])
 
     render("games/show.html.erb")
