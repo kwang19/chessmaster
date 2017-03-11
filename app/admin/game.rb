@@ -1,5 +1,7 @@
 ActiveAdmin.register Game do
 
+ permit_params :pgn, :user_id, :eventname, :eventdate, :white, :black, :result
+
 # See permitted parameters documentation:
 # https://github.com/activeadmin/activeadmin/blob/master/docs/2-resource-customization.md#setting-up-strong-parameters
 #
