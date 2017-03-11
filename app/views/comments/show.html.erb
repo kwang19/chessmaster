@@ -9,10 +9,22 @@
       <dd><%= @comment.body %></dd>
 
       <dt>User</dt>
-      <dd><%= @comment.user_id %></dd>
+      <dd>
+        <% if @comment.user.present? %>
+          <a href="/users/<%= @comment.user_id %>">
+            <%= @comment.user.email %>
+          </a>
+        <% end %>
+      </dd>
 
       <dt>Game</dt>
-      <dd><%= @comment.game_id %></dd>
+      <dd>
+        <% if @comment.game.present? %>
+          <a href="/games/<%= @comment.game_id %>">
+            <%= @comment.game.pgn %>
+          </a>
+        <% end %>
+      </dd>
 
     </dl>
 

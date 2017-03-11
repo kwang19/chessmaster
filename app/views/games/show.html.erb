@@ -9,7 +9,13 @@
       <dd><%= @game.pgn %></dd>
 
       <dt>User</dt>
-      <dd><%= @game.user_id %></dd>
+      <dd>
+        <% if @game.user.present? %>
+          <a href="/users/<%= @game.user_id %>">
+            <%= @game.user.email %>
+          </a>
+        <% end %>
+      </dd>
 
       <dt>Eventname</dt>
       <dd><%= @game.eventname %></dd>

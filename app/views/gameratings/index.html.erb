@@ -17,9 +17,21 @@
 
       <% @gameratings.each do |gamerating| %>
       <tr>
-        <td><%= gamerating.user.email %></td>
+        <td>
+          <% if gamerating.user.present? %>
+            <a href="/users/<%= gamerating.user.id %>">
+              <%= gamerating.user.email %>
+            </a>
+          <% end %>
+        </td>
         <td><%= gamerating.value %></td>
-        <td><%= gamerating.game.pgn %></td>
+        <td>
+          <% if gamerating.game.present? %>
+            <a href="/games/<%= gamerating.game.id %>">
+              <%= gamerating.game.pgn %>
+            </a>
+          <% end %>
+        </td>
         <td>
           <a href="/gameratings/<%= gamerating.id %>" class="btn btn-primary">Show</a>
           

@@ -6,13 +6,25 @@
   <div class="col-md-12 mb-2">
     <dl class="dl-horizontal">
       <dt>User</dt>
-      <dd><%= @gamerating.user_id %></dd>
+      <dd>
+        <% if @gamerating.user.present? %>
+          <a href="/users/<%= @gamerating.user_id %>">
+            <%= @gamerating.user.email %>
+          </a>
+        <% end %>
+      </dd>
 
       <dt>Value</dt>
       <dd><%= @gamerating.value %></dd>
 
       <dt>Game</dt>
-      <dd><%= @gamerating.game_id %></dd>
+      <dd>
+        <% if @gamerating.game.present? %>
+          <a href="/games/<%= @gamerating.game_id %>">
+            <%= @gamerating.game.pgn %>
+          </a>
+        <% end %>
+      </dd>
 
     </dl>
 

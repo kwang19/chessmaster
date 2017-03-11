@@ -6,10 +6,22 @@
   <div class="col-md-12 mb-2">
     <dl class="dl-horizontal">
       <dt>User</dt>
-      <dd><%= @like.user_id %></dd>
+      <dd>
+        <% if @like.user.present? %>
+          <a href="/users/<%= @like.user_id %>">
+            <%= @like.user.email %>
+          </a>
+        <% end %>
+      </dd>
 
       <dt>Game</dt>
-      <dd><%= @like.game_id %></dd>
+      <dd>
+        <% if @like.game.present? %>
+          <a href="/games/<%= @like.game_id %>">
+            <%= @like.game.pgn %>
+          </a>
+        <% end %>
+      </dd>
 
     </dl>
 

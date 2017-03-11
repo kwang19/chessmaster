@@ -22,7 +22,13 @@
       <% @games.each do |game| %>
       <tr>
         <td><%= game.pgn %></td>
-        <td><%= game.user.email %></td>
+        <td>
+          <% if game.user.present? %>
+            <a href="/users/<%= game.user.id %>">
+              <%= game.user.email %>
+            </a>
+          <% end %>
+        </td>
         <td><%= game.eventname %></td>
         <td><%= game.eventdate %></td>
         <td><%= game.white %></td>
