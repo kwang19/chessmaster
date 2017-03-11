@@ -15,6 +15,10 @@ class User < ApplicationRecord
 
   # Indirect associations
 
+  has_many   :liked_games,
+             :through => :likes,
+             :source => :game
+
   # Validations
 
   # Include default devise modules. Others available are:
