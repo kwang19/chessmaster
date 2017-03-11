@@ -27,14 +27,8 @@
         <textarea id="pgn" name="pgn" placeholder="Pgn" class="form-control" rows="3"><%= @game.pgn %></textarea>
       </div>
 
-      <!-- Label and input for user_id -->
-      <div class="form-group">
-        <label for="user_id" class="control-label">
-          User
-        </label>
-
-        <%= select_tag(:user_id, options_from_collection_for_select(User.all, :id, :email, @game.user_id), :class => "form-control") %>
-      </div>
+      
+      
 
       <!-- Label and input for eventname -->
       <div class="form-group">
