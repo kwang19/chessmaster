@@ -42,7 +42,7 @@
           Game
         </label>
 
-        <input type="text" id="game_id" name="game_id" placeholder="Game" class="form-control" value="<%= @comment.game_id %>">
+        <%= select_tag(:game_id, options_from_collection_for_select(Game.all, :id, :pgn, @comment.game_id), :class => "form-control") %>
       </div>
 
       <button class="btn btn-warning">
