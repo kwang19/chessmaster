@@ -1,6 +1,9 @@
 class User < ApplicationRecord
   # Direct associations
 
+  has_many   :games,
+             :dependent => :destroy
+
   has_many   :likes,
              :dependent => :destroy
 
