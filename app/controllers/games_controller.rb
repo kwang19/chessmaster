@@ -10,7 +10,8 @@ class GamesController < ApplicationController
   end
 
   def index
-    @games = Game.page(params[:page]).per(10)
+    @q = Game.ransack(params[:q])
+    @games = @q.result(:distinct => true).includes(:comments, :gameratings, :likes, :user, :fans, :commenters).page(params[:page]).per(10)
 
     render("games/index.html.erb")
   end
