@@ -17,7 +17,7 @@
 
       <% @gameratings.each do |gamerating| %>
       <tr>
-        <td><%= gamerating.user_id %></td>
+        <td><%= gamerating.user.email %></td>
         <td><%= gamerating.value %></td>
         <td><%= gamerating.game_id %></td>
         <td>
