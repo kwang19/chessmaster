@@ -1,6 +1,9 @@
 class Game < ApplicationRecord
   # Direct associations
 
+  has_many   :likes,
+             :dependent => :destroy
+
   has_many   :gameratings,
              :dependent => :destroy
 
