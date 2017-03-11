@@ -10,7 +10,7 @@ class GameratingsController < ApplicationController
   end
 
   def index
-    @gameratings = Gamerating.all
+    @gameratings = Gamerating.page(params[:page]).per(10)
 
     render("gameratings/index.html.erb")
   end
