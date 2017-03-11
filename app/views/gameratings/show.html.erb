@@ -20,12 +20,14 @@
       <a href="/gameratings" class="btn btn-primary">
         Back
       </a>
-      <a href="/gameratings/<%= @gamerating.id %>/edit" class="btn btn-warning">
-        Edit
-      </a>
-      <a href="/delete_gamerating/<%= @gamerating.id %>" class="btn btn-danger" rel="nofollow">
-        Delete
-      </a>
+      <% if current_user == @gamerating.user %>
+        <a href="/gameratings/<%= @gamerating.id %>/edit" class="btn btn-warning">
+          Edit
+        </a>
+        <a href="/delete_gamerating/<%= @gamerating.id %>" class="btn btn-danger" rel="nofollow">
+          Delete
+        </a>
+      <% end %>
     </div>
   </div>
 </div>
