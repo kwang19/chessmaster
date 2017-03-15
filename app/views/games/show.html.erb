@@ -8,19 +8,10 @@
       <dt>Pgn</dt>
       <dd><%= @game.pgn %></dd>
 
-      <dt>User</dt>
-      <dd>
-        <% if @game.user.present? %>
-          <a href="/users/<%= @game.user_id %>">
-            <%= @game.user.email %>
-          </a>
-        <% end %>
-      </dd>
-
-      <dt>Eventname</dt>
+      <dt>Event Name</dt>
       <dd><%= @game.eventname %></dd>
 
-      <dt>Eventdate</dt>
+      <dt>Event Date</dt>
       <dd><%= @game.eventdate %></dd>
 
       <dt>White</dt>
@@ -31,245 +22,20 @@
 
       <dt>Result</dt>
       <dd><%= @game.result %></dd>
-
+      <dt>Upload By</dt>
+      <dd><%= @game.user.username %></dd>
     </dl>
 
     <div class="btn-group btn-group-justified">
       <a href="/games" class="btn btn-primary">
         Back
       </a>
-      <% if current_user == @game.user %>
-        <a href="/games/<%= @game.id %>/edit" class="btn btn-warning">
-          Edit
-        </a>
-        <a href="/delete_game/<%= @game.id %>" class="btn btn-danger" rel="nofollow">
-          Delete
-        </a>
-      <% end %>
+      <a href="/games/<%= @game.id %>/edit" class="btn btn-warning">
+        Edit
+      </a>
+      <a href="/delete_game/<%= @game.id %>" class="btn btn-danger" rel="nofollow">
+        Delete
+      </a>
     </div>
-  </div>
-</div>
-
-<!-- A Game has many comments -->
-
-<div class="row">
-  <div class="col-md-12">
-    <ul class="list-group">
-      <li class="list-group-item list-group-item-info">
-        Comments
-      </li>
-
-      <% @game.comments.each do |comment| %>
-        <li class="list-group-item">
-          <a href="/comments/<%= comment.id %>">
-            <%= comment.body %>
-          </a>
-          <div class="btn-group btn-group-xs pull-right">
-            <a href="/comments/<%= comment.id %>" class="btn btn-primary">
-              <i class="fa fa-search-plus"></i>
-            </a>
-            <a href="/comments/<%= comment.id %>/edit" class="btn btn-warning">
-              <i class="fa fa-edit"></i>
-            </a>
-            <a href="/delete_comment/<%= comment.id %>" class="btn btn-danger" rel="nofollow">
-              <i class="fa fa-trash-o"></i>
-            </a>
-          </div>
-        </li>
-      <% end %>
-
-      <li class="list-group-item">
-        <form action="/create_comment" method="post">
-      <!-- Hidden input for authenticity token to protect from forgery -->
-      <input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>">
-
-      <!-- Label and input for body -->
-      <div class="form-group">
-        <label for="body" class="control-label">
-          Body
-        </label>
-
-        <textarea id="body" name="body" placeholder="Body" class="form-control" rows="3"></textarea>
-      </div>
-
-      <!-- Label and input for user_id -->
-      <input type="hidden" name="user_id" value="<%= current_user.id %>">
-
-      <!-- Label and input for game_id -->
-      <input type="hidden" name="game_id" value="<%= @game.id %>">
-
-      <button class="btn btn-block btn-success">
-        Create Comment
-      </button>
-    </form>
-      </li>
-    </ul>
-  </div>
-</div>
-
-<!-- A Game has many gameratings -->
-
-<div class="row">
-  <div class="col-md-12">
-    <ul class="list-group">
-      <li class="list-group-item list-group-item-info">
-        Gameratings
-      </li>
-
-      <% @game.gameratings.each do |gamerating| %>
-        <li class="list-group-item">
-          <a href="/gameratings/<%= gamerating.id %>">
-            <%= gamerating.user_id %>
-          </a>
-          <div class="btn-group btn-group-xs pull-right">
-            <a href="/gameratings/<%= gamerating.id %>" class="btn btn-primary">
-              <i class="fa fa-search-plus"></i>
-            </a>
-            <a href="/gameratings/<%= gamerating.id %>/edit" class="btn btn-warning">
-              <i class="fa fa-edit"></i>
-            </a>
-            <a href="/delete_gamerating/<%= gamerating.id %>" class="btn btn-danger" rel="nofollow">
-              <i class="fa fa-trash-o"></i>
-            </a>
-          </div>
-        </li>
-      <% end %>
-
-      <li class="list-group-item">
-        <form action="/create_gamerating" method="post">
-      <!-- Hidden input for authenticity token to protect from forgery -->
-      <input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>">
-
-      <!-- Label and input for user_id -->
-      <input type="hidden" name="user_id" value="<%= current_user.id %>">
-
-      <!-- Label and input for value -->
-      <div class="form-group">
-        <label for="value" class="control-label">
-          Value
-        </label>
-
-        <input type="text" id="value" name="value" placeholder="Value" class="form-control" value="">
-      </div>
-
-      <!-- Label and input for game_id -->
-      <input type="hidden" name="game_id" value="<%= @game.id %>">
-
-      <button class="btn btn-block btn-success">
-        Create Gamerating
-      </button>
-    </form>
-      </li>
-    </ul>
-  </div>
-</div>
-
-<!-- A Game has many likes -->
-
-<div class="row">
-  <div class="col-md-12">
-    <ul class="list-group">
-      <li class="list-group-item list-group-item-info">
-        Likes
-      </li>
-
-      <% @game.likes.each do |like| %>
-        <li class="list-group-item">
-          <a href="/likes/<%= like.id %>">
-            <%= like.user_id %>
-          </a>
-          <div class="btn-group btn-group-xs pull-right">
-            <a href="/likes/<%= like.id %>" class="btn btn-primary">
-              <i class="fa fa-search-plus"></i>
-            </a>
-            <a href="/likes/<%= like.id %>/edit" class="btn btn-warning">
-              <i class="fa fa-edit"></i>
-            </a>
-            <a href="/delete_like/<%= like.id %>" class="btn btn-danger" rel="nofollow">
-              <i class="fa fa-trash-o"></i>
-            </a>
-          </div>
-        </li>
-      <% end %>
-
-      <li class="list-group-item">
-        <form action="/create_like" method="post">
-      <!-- Hidden input for authenticity token to protect from forgery -->
-      <input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>">
-
-      <!-- Label and input for user_id -->
-      <input type="hidden" name="user_id" value="<%= current_user.id %>">
-
-      <!-- Label and input for game_id -->
-      <input type="hidden" name="game_id" value="<%= @game.id %>">
-
-      <button class="btn btn-block btn-success">
-        Create Like
-      </button>
-    </form>
-      </li>
-    </ul>
-  </div>
-</div>
-
-<!-- A Game has many fans -->
-
-<div class="row">
-  <div class="col-md-12">
-    <ul class="list-group">
-      <li class="list-group-item list-group-item-info">
-        Fans
-      </li>
-
-      <% @game.fans.each do |user| %>
-        <li class="list-group-item">
-          <a href="/users/<%= user.id %>">
-            <%= user.email %>
-          </a>
-          <div class="btn-group btn-group-xs pull-right">
-            <a href="/users/<%= user.id %>" class="btn btn-primary">
-              <i class="fa fa-search-plus"></i>
-            </a>
-            <a href="/users/<%= user.id %>/edit" class="btn btn-warning">
-              <i class="fa fa-edit"></i>
-            </a>
-            <a href="/delete_user/<%= user.id %>" class="btn btn-danger" rel="nofollow">
-              <i class="fa fa-trash-o"></i>
-            </a>
-          </div>
-        </li>
-      <% end %>
-    </ul>
-  </div>
-</div>
-
-<!-- A Game has many commenters -->
-
-<div class="row">
-  <div class="col-md-12">
-    <ul class="list-group">
-      <li class="list-group-item list-group-item-info">
-        Commenters
-      </li>
-
-      <% @game.commenters.each do |user| %>
-        <li class="list-group-item">
-          <a href="/users/<%= user.id %>">
-            <%= user.email %>
-          </a>
-          <div class="btn-group btn-group-xs pull-right">
-            <a href="/users/<%= user.id %>" class="btn btn-primary">
-              <i class="fa fa-search-plus"></i>
-            </a>
-            <a href="/users/<%= user.id %>/edit" class="btn btn-warning">
-              <i class="fa fa-edit"></i>
-            </a>
-            <a href="/delete_user/<%= user.id %>" class="btn btn-danger" rel="nofollow">
-              <i class="fa fa-trash-o"></i>
-            </a>
-          </div>
-        </li>
-      <% end %>
-    </ul>
   </div>
 </div>

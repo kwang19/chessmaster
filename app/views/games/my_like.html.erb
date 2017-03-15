@@ -1,0 +1,48 @@
+<div class="page-header">
+  <h3>
+    My Likes
+  </h3>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+    <table class="table table-striped table-hover">
+      <tr>
+        <th>Event Name</th>
+        <th>Event Date</th>
+        <th>White</th>
+        <th>Black</th>
+        <th>Result</th>
+        <th>Ratings</th>
+        <th>Upload By</th>
+        <th>Action</th>
+      </tr>
+      <% @games.each do |game| %>
+      <input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>">
+      <input type="hidden" name="game_id" value="<%=game.id%>">
+      <input type="hidden" name="user_id" value="<%=game.user.id%>">
+      <tr>
+        <td><%= game.eventname %></td>
+        <td><%= game.eventdate %></td>
+        <td><%= game.white %></td>
+        <td><%= game.black %></td>
+        <td><%= game.result %></td>
+        <td><%= game.gameratings.sum(:value) %></td>
+        <td><a href="games/user/<%= game.user.id %>"><%= game.user.username %></a></td>
+        <td>
+          <form action="/showgame" method="post">
+            <input type="hidden" name="game_id" value="<%=game.id%>">
+            <button class="btn btn-success">
+              Show
+            </button>
+          </form>
+        </td>
+      </tr>
+      <% end %>
+    </table>
+    <div class="digg_pagination">
+    <%= will_paginate @games, :container => false %>
+    <li><a href="/newgame"><i class="fa fa-plus-square" aria-hidden="true"></i>New Game</a></li>
+  </div>
+  </div>
+</div>

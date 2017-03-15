@@ -18,6 +18,15 @@
       <!-- Hidden input for authenticity token to protect from forgery -->
       <input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>">
 
+      <!-- Label and input for game_id -->
+      <div class="form-group">
+        <label for="game_id" class="control-label">
+          Game
+        </label>
+
+        <input type="text" id="game_id" name="game_id" placeholder="Game" class="form-control" value="<%= @comment.game_id %>">
+      </div>
+
       <!-- Label and input for body -->
       <div class="form-group">
         <label for="body" class="control-label">
@@ -27,16 +36,13 @@
         <textarea id="body" name="body" placeholder="Body" class="form-control" rows="3"><%= @comment.body %></textarea>
       </div>
 
-      
-      
-
-      <!-- Label and input for game_id -->
+      <!-- Label and input for user_id -->
       <div class="form-group">
-        <label for="game_id" class="control-label">
-          Game
+        <label for="user_id" class="control-label">
+          User
         </label>
 
-        <%= select_tag(:game_id, options_from_collection_for_select(Game.all, :id, :pgn, @comment.game_id), :class => "form-control") %>
+        <input type="text" id="user_id" name="user_id" placeholder="User" class="form-control" value="<%= @comment.user_id %>">
       </div>
 
       <button class="btn btn-warning">

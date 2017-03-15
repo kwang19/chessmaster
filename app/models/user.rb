@@ -1,32 +1,16 @@
 class User < ApplicationRecord
-  # Direct associations
-
-  has_many   :games,
-             :dependent => :destroy
-
-  has_many   :likes,
-             :dependent => :destroy
-
-  has_many   :gameratings,
-             :dependent => :destroy
-
-  has_many   :comments,
-             :dependent => :destroy
-
-  # Indirect associations
-
-  has_many   :commented_games,
-             :through => :comments,
-             :source => :game
-
-  has_many   :liked_games,
-             :through => :likes,
-             :source => :game
-
-  # Validations
-
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
   devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :trackable, :validatable
+           :recoverable, :rememberable, :trackable, :validatable
+
+    has_many :games
+    has_many :comments
+    has_many :likes
+    has_many :gameratings
+    has_many :liked_games, :through => :likes, :source => :game
+    # has_many :games_ratings, :through => :gameratings, :source => :game
+    validates :username, :presence => true, :uniqueness => true
+
+    mount_uploader :photo, PhotoUploader
 end

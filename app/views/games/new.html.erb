@@ -1,4 +1,4 @@
-<!-- Validation failure messages -->
+  <!-- Validation failure messages -->
 <% if @game.errors.any? %>
   <% @game.errors.full_messages.each do |message| %>
     <div class="alert alert-dismissable alert-danger">
@@ -14,7 +14,7 @@
 
 <div class="row">
   <div class="col-md-12">
-    <form action="/create_game" method="post">
+    <form action="/create_game" method="post" enctype="multipart/form-data">
       <!-- Hidden input for authenticity token to protect from forgery -->
       <input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>">
 
@@ -23,12 +23,8 @@
         <label for="pgn" class="control-label">
           Pgn
         </label>
-
         <textarea id="pgn" name="pgn" placeholder="Pgn" class="form-control" rows="3"><%= @game.pgn %></textarea>
       </div>
-
-      <!-- Label and input for user_id -->
-      <input type="hidden" name="user_id" value="<%= current_user.id %>">
 
       <!-- Label and input for eventname -->
       <div class="form-group">
@@ -38,7 +34,7 @@
 
         <input type="text" id="eventname" name="eventname" placeholder="Eventname" class="form-control" value="<%= @game.eventname %>">
       </div>
-
+      <input type="hidden" id="user_id" name="user_id" value="<%=current_user.id%>">
       <!-- Label and input for eventdate -->
       <div class="form-group">
         <label for="eventdate" class="control-label">

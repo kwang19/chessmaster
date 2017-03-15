@@ -6,22 +6,10 @@
   <div class="col-md-12 mb-2">
     <dl class="dl-horizontal">
       <dt>User</dt>
-      <dd>
-        <% if @like.user.present? %>
-          <a href="/users/<%= @like.user_id %>">
-            <%= @like.user.email %>
-          </a>
-        <% end %>
-      </dd>
+      <dd><%= @like.user_id %></dd>
 
       <dt>Game</dt>
-      <dd>
-        <% if @like.game.present? %>
-          <a href="/games/<%= @like.game_id %>">
-            <%= @like.game.pgn %>
-          </a>
-        <% end %>
-      </dd>
+      <dd><%= @like.game_id %></dd>
 
     </dl>
 
@@ -29,14 +17,12 @@
       <a href="/likes" class="btn btn-primary">
         Back
       </a>
-      <% if current_user == @like.user %>
-        <a href="/likes/<%= @like.id %>/edit" class="btn btn-warning">
-          Edit
-        </a>
-        <a href="/delete_like/<%= @like.id %>" class="btn btn-danger" rel="nofollow">
-          Delete
-        </a>
-      <% end %>
+      <a href="/likes/<%= @like.id %>/edit" class="btn btn-warning">
+        Edit
+      </a>
+      <a href="/delete_like/<%= @like.id %>" class="btn btn-danger" rel="nofollow">
+        Delete
+      </a>
     </div>
   </div>
 </div>

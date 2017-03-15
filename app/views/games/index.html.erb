@@ -1,188 +1,68 @@
 <div class="page-header">
-  <h1>
-    Games
-    <a href="/games/new" class="btn btn-lg btn-success">New Game</a>
-  </h1>
-</div><div class="row mb-1">
-  <div class="col-md-12">
-    <%= search_form_for @q, :class => collapse_search_form, :id => "games_filters" do |f| %>
-      <p class="lead">Narrow results:</p>
-
-        <div class="form-group">
-    <%= f.label :pgn_cont, "Pgn contains" %>
-    <%= f.text_field :pgn_cont, :class => "form-control", :placeholder => "Pgn contains" %>
-  </div>
-
-<div class="form-group">
-    <%= f.label :result_cont, "Result contains" %>
-    <%= f.text_field :result_cont, :class => "form-control", :placeholder => "Result contains" %>
-  </div>
-
-<div class="form-group">
-    <%= f.label :black_cont, "Black contains" %>
-    <%= f.text_field :black_cont, :class => "form-control", :placeholder => "Black contains" %>
-  </div>
-
-<div class="form-group">
-    <%= f.label :white_cont, "White contains" %>
-    <%= f.text_field :white_cont, :class => "form-control", :placeholder => "White contains" %>
-  </div>
-
-<div class="form-group">
-          <%= f.label :eventdate, "Eventdate" %>
-          <div class="row">
-            <div class='col-md-6 mb-1'>
-              <div class='input-group date' id='eventdategteqPicker'>
-                  <%= f.text_field :eventdate_gteq, :class => "form-control", :placeholder => "Eventdate greater than or equal to" %>
-                  <span class="input-group-addon">
-                      <span class="glyphicon glyphicon-calendar"></span>
-                  </span>
-              </div>
-            </div>
-
-            <div class='col-md-6'>
-              <div class='input-group date' id='eventdatelteqPicker'>
-                  <%= f.text_field :eventdate_lteq, :class => "form-control", :placeholder => "Eventdate less than or equal to" %>
-                  <span class="input-group-addon">
-                      <span class="glyphicon glyphicon-calendar"></span>
-                  </span>
-              </div>
-            </div>
-          </div>
-      </div>
-      <script type="text/javascript">
-          $(function () {
-              $('#eventdategteqPicker').datetimepicker({
-                  format: 'MM/DD/YYYY'
-              });
-              $('#eventdatelteqPicker').datetimepicker({
-                  useCurrent: false,
-                  format: 'MM/DD/YYYY'
-              });
-              $('#eventdategteqPicker').on("dp.change", function (e) {
-                  $('#eventdatelteqPicker').data("DateTimePicker").minDate(e.date);
-              });
-              $('#eventdatelteqPicker').on("dp.change", function (e) {
-                  $('#eventdategteqPicker').data("DateTimePicker").maxDate(e.date);
-              });
-          });
-      </script>
-
-<div class="form-group">
-    <%= f.label :eventname_cont, "Eventname contains" %>
-    <%= f.text_field :eventname_cont, :class => "form-control", :placeholder => "Eventname contains" %>
-  </div>
-
-<div class="form-group">
-          <%= f.label :created_at, "Created at" %>
-          <div class="row">
-            <div class='col-md-6 mb-1'>
-              <div class='input-group date' id='created_atgteqPicker'>
-                  <%= f.text_field :created_at_gteq, :class => "form-control", :placeholder => "Created at greater than or equal to" %>
-                  <span class="input-group-addon">
-                      <span class="glyphicon glyphicon-calendar"></span>
-                  </span>
-              </div>
-            </div>
-
-            <div class='col-md-6'>
-              <div class='input-group date' id='created_atlteqPicker'>
-                  <%= f.text_field :created_at_lteq, :class => "form-control", :placeholder => "Created at less than or equal to" %>
-                  <span class="input-group-addon">
-                      <span class="glyphicon glyphicon-calendar"></span>
-                  </span>
-              </div>
-            </div>
-          </div>
-      </div>
-      <script type="text/javascript">
-          $(function () {
-              $('#created_atgteqPicker').datetimepicker({
-                  format: 'YYYY-MM-DD hh:mm:SS'
-              });
-              $('#created_atlteqPicker').datetimepicker({
-                  useCurrent: false,
-                  format: 'YYYY-MM-DD hh:mm:SS'
-              });
-              $('#created_atgteqPicker').on("dp.change", function (e) {
-                  $('#created_atlteqPicker').data("DateTimePicker").minDate(e.date);
-              });
-              $('#created_atlteqPicker').on("dp.change", function (e) {
-                  $('#created_atgteqPicker').data("DateTimePicker").maxDate(e.date);
-              });
-          });
-      </script>
-
-        <div class="form-group">
-      <%= f.label :comments_body_cont, "Comment body contains" %>
-      <%= f.text_field :comments_body_cont, :class => "form-control", :placeholder => "Comment body contains" %>
-    </div>
-
-<div class="form-group">
-      <%= f.label :user_email_cont, "User email contains" %>
-      <%= f.text_field :user_email_cont, :class => "form-control", :placeholder => "User email contains" %>
-    </div>
-
-<div class="form-group">
-      <%= f.label :fans_email_cont, "User email contains" %>
-      <%= f.text_field :fans_email_cont, :class => "form-control", :placeholder => "User email contains" %>
-    </div>
-
-<div class="form-group">
-      <%= f.label :commenters_email_cont, "User email contains" %>
-      <%= f.text_field :commenters_email_cont, :class => "form-control", :placeholder => "User email contains" %>
-    </div>
-
-      <%= f.submit :class => "btn btn-primary btn-block mb-1" %>
-
-      <a href="/games" class="btn btn-default btn-block mb-1">Clear filters</a>
+  <h3>
+    <% if @user != nil %>
+      <% if !@user.photo.blank? %>
+      <img src="<%= @user.photo %>" style="width: 50px;">
+      <% end %>
+      <% if @user != current_user %>
+          <%=@user.username%> Posts
+      <% else %>
+          My Wall
+      <% end %>
+    <% else %>
+    All Posts
     <% end %>
-    <a class="btn btn-default btn-block mb-1" data-toggle="collapse" href="#games_filters">
-      Show Filters
-    </a>
-  </div>
+  </h3>
 </div>
 
 <div class="row">
   <div class="col-md-12">
     <table class="table table-striped table-hover">
       <tr>
-        <th>Pgn</th>
-        <th>User</th>
-        <th>Eventname</th>
-        <th>Eventdate</th>
+        <th>Event Name</th>
+        <th>Event Date</th>
         <th>White</th>
         <th>Black</th>
         <th>Result</th>
+        <th>Ratings</th>
+        <% if @user == nil %>
+        <th>Upload By</th>
+        <% end %>
         <th>Actions</th>
-      </tr>
 
+      </tr>
+      <% if @user != nil %>
+      <% @games = @games.where(:user_id=>@user.id)%>
+      <% end %>
       <% @games.each do |game| %>
+      <input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>">
+      <input type="hidden" name="game_id" value="<%=game.id%>">
+      <input type="hidden" name="user_id" value="<%=game.user.id%>">
       <tr>
-        <td><%= game.pgn %></td>
-        <td>
-          <% if game.user.present? %>
-            <a href="/users/<%= game.user.id %>">
-              <%= game.user.email %>
-            </a>
-          <% end %>
-        </td>
         <td><%= game.eventname %></td>
         <td><%= game.eventdate %></td>
         <td><%= game.white %></td>
         <td><%= game.black %></td>
         <td><%= game.result %></td>
+        <td><%= game.gameratings.sum(:value) %></td>
+        <% if @user == nil %>
+        <td><a href="games/user/<%= game.user.id %>"><%= game.user.username %></a></td>
+        <% end %>
         <td>
-          <a href="/games/<%= game.id %>" class="btn btn-primary">Show</a>
-          
-          <% if current_user == game.user %>
-            <a href="/games/<%= game.id %>/edit" class="btn btn-warning">Edit</a>
-            <a href="/delete_game/<%= game.id %>" class="btn btn-danger" rel="nofollow">Delete</a>
-          <% end %>
+          <form action="/showgame" method="post">
+            <input type="hidden" name="game_id" value="<%=game.id%>">
+            <button class="btn btn-success">
+              Show
+            </button>
+          </form>
         </td>
+
       </tr>
       <% end %>
     </table>
-    <%= paginate @games, theme: 'twitter-bootstrap-4' %>
+    <div class="digg_pagination">
+    <%= will_paginate @posts, :container => false %>
+    <li><a href="/newgame"><i class="fa fa-plus-square" aria-hidden="true"></i>New Game</a></li>
+  </div>
   </div>
 </div>

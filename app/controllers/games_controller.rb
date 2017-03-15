@@ -1,61 +1,65 @@
 class GamesController < ApplicationController
-  before_action :current_user_must_be_game_user, :only => [:edit, :update, :destroy]
-
-  def current_user_must_be_game_user
-    game = Game.find(params[:id])
-
-    unless current_user == game.user
-      redirect_to :back, :alert => "You are not authorized for that."
-    end
-  end
-
   def index
-    @q = Game.ransack(params[:q])
-    @games = @q.result(:distinct => true).includes(:comments, :gameratings, :likes, :user, :fans, :commenters).page(params[:page]).per(10)
+    # @games = Game.all
+    @games = Game.order("created_at").paginate(:page => params[:page], :per_page => 5)
 
     render("games/index.html.erb")
   end
+  def mylikes
+    @games = current_user.liked_games.paginate(:page => params[:page], :per_page => 5)
+    render("games/my_like.html.erb")
+  end
+  def mywall
+    @user = User.find(current_user.id)
+    @games= Game.order("created_at").paginate(:page => params[:page], :per_page => 5)
 
+    render("games/index.html.erb")
+  end
   def show
-    @like = Like.new
-    @gamerating = Gamerating.new
-    @comment = Comment.new
     @game = Game.find(params[:id])
 
     render("games/show.html.erb")
   end
+  def showuser
+    @user = User.find(params[:id])
+    @games = @user.games.paginate(:page => params[:page], :per_page => 5)
 
+    render("games/index.html.erb")
+  end
   def new
     @game = Game.new
-
     render("games/new.html.erb")
   end
-
+  def newgame
+    @game = Game.new
+    render("chessboard/newgame.html.erb")
+  end
+  def editgame
+    @game = Game.find(params[:game_id])
+    render("chessboard/editgame.html.erb")
+  end
   def create
     @game = Game.new
 
     @game.pgn = params[:pgn]
-    @game.user_id = params[:user_id]
     @game.eventname = params[:eventname]
+    @game.user_id = params[:user_id]
     @game.eventdate = params[:eventdate]
     @game.white = params[:white]
     @game.black = params[:black]
     @game.result = params[:result]
 
     save_status = @game.save
-
     if save_status == true
-      referer = URI(request.referer).path
+      @games= current_user.games.paginate(:page => params[:page], :per_page => 5)
+  redirect_to("/mywall")
+else
+  render("chessboard/newgame.html.erb")
+end
 
-      case referer
-      when "/games/new", "/create_game"
-        redirect_to("/games")
-      else
-        redirect_back(:fallback_location => "/", :notice => "Game created successfully.")
-      end
-    else
-      render("games/new.html.erb")
-    end
+
+
+
   end
 
   def edit
@@ -68,8 +72,8 @@ class GamesController < ApplicationController
     @game = Game.find(params[:id])
 
     @game.pgn = params[:pgn]
-    @game.user_id = params[:user_id]
     @game.eventname = params[:eventname]
+    @game.user_id = params[:user_id]
     @game.eventdate = params[:eventdate]
     @game.white = params[:white]
     @game.black = params[:black]
@@ -78,14 +82,7 @@ class GamesController < ApplicationController
     save_status = @game.save
 
     if save_status == true
-      referer = URI(request.referer).path
-
-      case referer
-      when "/games/#{@game.id}/edit", "/update_game"
-        redirect_to("/games/#{@game.id}", :notice => "Game updated successfully.")
-      else
-        redirect_back(:fallback_location => "/", :notice => "Game updated successfully.")
-      end
+      redirect_to("/games/#{@game.id}", :notice => "Game updated successfully.")
     else
       render("games/edit.html.erb")
     end
@@ -95,11 +92,8 @@ class GamesController < ApplicationController
     @game = Game.find(params[:id])
 
     @game.destroy
+    @games= current_user.games.paginate(:page => params[:page], :per_page => 5)
 
-    if URI(request.referer).path == "/games/#{@game.id}"
-      redirect_to("/", :notice => "Game deleted.")
-    else
-      redirect_back(:fallback_location => "/", :notice => "Game deleted.")
-    end
+    redirect_to("/mywall")
   end
 end

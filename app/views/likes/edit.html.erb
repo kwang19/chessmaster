@@ -18,8 +18,14 @@
       <!-- Hidden input for authenticity token to protect from forgery -->
       <input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>">
 
-      
-      
+      <!-- Label and input for user_id -->
+      <div class="form-group">
+        <label for="user_id" class="control-label">
+          User
+        </label>
+
+        <input type="text" id="user_id" name="user_id" placeholder="User" class="form-control" value="<%= @like.user_id %>">
+      </div>
 
       <!-- Label and input for game_id -->
       <div class="form-group">
@@ -27,7 +33,7 @@
           Game
         </label>
 
-        <%= select_tag(:game_id, options_from_collection_for_select(Game.all, :id, :pgn, @like.game_id), :class => "form-control") %>
+        <input type="text" id="game_id" name="game_id" placeholder="Game" class="form-control" value="<%= @like.game_id %>">
       </div>
 
       <button class="btn btn-warning">

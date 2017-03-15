@@ -1,0 +1,389 @@
+<div class="row vertical-divider" style="margin-top: 30px">
+	<div class="col-xs-6">
+		<div>
+			<button class="btn btn-primary" onclick='restart()'>
+				<i class="fa fa-fast-backward" aria-hidden="true"></i>
+			</button>
+			<button class="btn btn-primary" onclick='moveback()'>
+				<i class="fa fa-backward" aria-hidden="true"></i></i>
+			</button>
+			<button class="btn btn-primary" onclick='replay()'>
+				<i class="fa fa-play" aria-hidden="true"></i>
+			</button>
+			<button class="btn btn-primary" onclick='moveforward()'>
+				<i class="fa fa-forward" aria-hidden="true"></i>
+			</button>
+			<button class="btn btn-primary" onclick='showgame()'>
+				<i class="fa fa-fast-forward" aria-hidden="true"></i>
+			</button>
+			<button class="btn btn-primary" onclick='pause()'>
+				<i class="fa fa-pause" aria-hidden="true"></i>
+			</button>
+			<span id="result">Result: <%=@game.result%></span></div>
+			<div>Black: <span id="black"><%=@game.black%></span></div>
+			<div id="board" style="width: 400px"></div>
+			<div>White: <span id="white"><%=@game.white%></span></div>
+			<p><span id="status"></span></p>
+
+			<input type="hidden" id="hiddenPgn" name="hiddenPgn" value="<%=@game.pgn%>">
+
+		</div>
+
+		<div class="col-xs-6">
+			<div>
+				<% if current_user.id == @game.user_id %>
+				<form action="/editgame" method="post">
+					<input type="hidden" name="game_id" value="<%=@game.id%>">
+					<button class="btn btn-success">
+						Edit
+					</button>
+				</form>
+				<a href="/delete_game/<%= @game.id %>" class="btn btn-danger" rel="nofollow">Delete</a>
+        <h5>Total Rating: <span id="rating"><%= @game.gameratings.sum(:value) %></span></h5>
+				<ul class="media-list">
+					<% @game.comments.order(:created_at).reverse_each do |comment| %>
+					<div>
+						<a href="games/user/<%= comment.user.id %>"><%= comment.user.username %></a>
+						<small><%= time_ago_in_words( comment.created_at ) %> ago</small>
+					</div>
+					<div><%= comment.body %></div>
+					<% end %>
+					<li class="media">
+						<div class="media-body">
+							<form action="/create_comment" method="post">
+								<!-- Hidden input for authenticity token to protect from forgery -->
+								<input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>">
+
+								<!-- Label and input for photo_id -->
+								<input type="hidden" name="game_id" value="<%= @game.id %>">
+
+								<!-- Label and input for body -->
+								<input type="text" id="body" name="body" placeholder='Add a comment...' class="form-control" required>
+								<div class="input-group-btn">
+									<button class="btn btn-success">
+										<i class="fa fa-commenting-o"></i>
+									</button>
+								</div>
+								<!-- Label and input for user_id -->
+								<input type="hidden" name="user_id" value="<%= current_user.id %>">
+							</form>
+						</div>
+					</li>
+				</ul>
+				<% else %>
+				<div>
+					<% if  @game.fans.pluck(:user_id).include? current_user.id%>
+					<form action="/delete_like" method="post">
+						<% @like = @game.likes.find_by(:user_id=>current_user.id, :game_id=>@game.id) %>
+						<input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>">
+						<input type="hidden" name="like_id" value="<%= @like.id %>">
+						<input type="hidden" name="game_id" value="<%= @game.id %>">
+						<div class="input-group-btn">
+							<button class="btn btn-success">
+								<span class="fa-stack fa-1x">
+									<i class="fa fa-heart fa-stack-2x"></i>
+									<i class="fa fa-bolt fa-stack-1x fa-inverse"></i>
+								</span>
+							</button>
+						</div>
+						<% @like = @game.likes.find_by(:user_id=>current_user.id, :game_id=>@game.id) %>
+
+						<small class="text-muted">
+							<% if @game.likes.count == 0%>
+							be the first to like this
+							<% else %>
+							<%= @game.fans.pluck(:username).to_sentence %>
+							<% end %>
+						</small>
+					</div>
+					<!-- Label and input for user_id -->
+					<input type="hidden" name="user_id" value="<%= current_user.id %>">
+				</form>
+				<% else %>
+				<form action="/create_like" method="post">
+					<% @like = @game.likes.find_by(:user_id=>current_user.id, :game_id=>@game.id) %>
+					<input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>">
+					<%if @like != nil%>
+					<input type="hidden" name="like_id" value="<%= @like.id %>">
+					<% end %>
+					<input type="hidden" name="game_id" value="<%= @game.id %>">
+					<div class="input-group-btn">
+						<button class="btn btn-success">
+							<i class="fa fa-heart"></i>
+						</button>
+					</div>
+					<div>
+						<% @like = @game.likes.find_by(:user_id=>current_user.id, :game_id=>@game.id) %>
+
+						<small class="text-muted">
+							<% if @game.likes.count == 0%>
+							be the first to like this
+							<% else %>
+							<%= @game.fans.pluck(:username).to_sentence %>
+							<% end %>
+						</small>
+					</div>
+					<!-- user_id -->
+					<input type="hidden" name="user_id" value="<%= current_user.id %>">
+				</form>
+				<% end %>
+				<h5>Total Rating: <span id="rating"><%= @game.gameratings.sum(:value) %></span></h5>
+				<% if  !@game.ratings.pluck(:user_id).include? current_user.id%>
+				<form action="/create_gamerating" method="post">
+					<% @gamerating = @game.gameratings.find_by(:id=>@game.id, :user_id=>current_user.id ) %>
+					<input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>">
+					<div>
+						<input type = "radio" id="value_pawn" name="value"
+						value="1" />Pawn
+						<input type = "radio" id="value_knight" name="value"
+						value="3" />Knight
+						<input type = "radio" id = "value_rook" name = "value"
+						value = "5" />Rook
+						<input type = "radio" id = "value_queen" name = "value"
+						value = "9" />Queen
+						<input type="hidden" name="game_id" value="<%= @game.id %>">
+
+						<button class="btn btn-success">
+							<i class="fa fa-thumbs-up" aria-hidden="true"></i>
+						</button>
+					</div>
+					<!-- user_id -->
+					<input type="hidden" name="user_id" value="<%= current_user.id %>">
+				</form>
+				<% end %>
+				<ul class="media-list">
+					<% @game.comments.order(:created_at).reverse_each do |comment| %>
+					<div>
+						<a href="games/user/<%= comment.user.id %>"><%= comment.user.username %></a>
+						<small><%= time_ago_in_words( comment.created_at ) %> ago</small>
+					</div>
+					<div><%= comment.body %></div>
+					<% end %>
+					<li class="media">
+						<div class="media-body">
+							<form action="/create_comment" method="post">
+								<!-- Hidden input for authenticity token to protect from forgery -->
+								<input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>">
+
+								<!-- Label and input for photo_id -->
+								<input type="hidden" name="game_id" value="<%= @game.id %>">
+
+								<!-- Label and input for body -->
+								<input type="text" id="body" name="body" placeholder='Add a comment...' class="form-control" required>
+								<div class="input-group-btn">
+									<button class="btn btn-success">
+										<i class="fa fa-commenting-o"></i>
+									</button>
+								</div>
+								<!-- Label and input for user_id -->
+								<input type="hidden" name="user_id" value="<%= current_user.id %>">
+							</form>
+						</div>
+					</li>
+				</ul>
+			</div>
+		</div>
+
+		<% end %>
+	</div>
+</div>
+
+<script type="text/javascript">
+var blitz = 0;
+var varReplay;
+var old;
+var index = 0;
+var statusEl = $('#status');
+var board,
+game = new Chess(), pgnEl = $('#pgn');
+// do not pick up pieces if the game is over
+// only pick up pieces for the side to move
+
+var score = function () {
+	blitz++;
+	blitzEl.html(blitz);
+
+	//document.write(blitz);
+};
+
+
+var onDragStart = function (source, piece, position, orientation) {
+	if (game.game_over() === true ||
+	(game.turn() === 'w' && piece.search(/^b/) !== -1) ||
+	(game.turn() === 'b' && piece.search(/^w/) !== -1)) {
+		return false;
+	}
+};
+
+
+var onDrop = function (source, target) {
+	// see if the move is legal
+	var move = game.move({
+		from: source,
+		to: target,
+		promotion: 'q' // NOTE: always promote to a queen for example simplicity
+	});
+
+	// illegal move
+	if (move === null) return 'snapback';
+
+	updateStatus();
+};
+
+// update the board position after the piece snap
+// for castling, en passant, pawn promotion
+var onSnapEnd = function () {
+	board.position(game.fen());
+};
+
+var doUpload = function () {
+
+	var pgn = txtGame.value;
+	game.load_pgn(pgn);
+	old = game.history();
+	index = old.length;
+	board.position(game.fen());
+	updateStatus();
+}
+
+var moveback = function () {
+
+	takeback();
+	if (index > 0)
+	{ index--; }
+
+}
+var moveforward = function () {
+	clearTimeout(varReplay);
+	game.move(old[index]);
+
+	if (index < old.length)
+	{ index++; }
+	board.position(game.fen());
+	updateStatus();
+}
+function pause()
+{
+	clearTimeout(varReplay);
+}
+
+var replayMove = function () {
+
+	if (index == 0) {
+		restart();
+	}
+	//var randomIndex = Math.floor(Math.random() * possibleMoves.length);
+	game.move(old[index]);
+	board.position(game.fen());
+	if (index < old.length)
+	index++;
+
+	updateStatus();
+	varReplay = window.setTimeout(replayMove, 1000);
+
+};
+
+var replay = function () {
+	index = 0;
+	restart();
+	replayMove();
+}
+var updateStatus = function () {
+	var status = '';
+
+	var moveColor = 'White';
+	if (game.turn() === 'b') {
+		moveColor = 'Black';
+	}
+
+	// checkmate?
+	if (game.in_checkmate() === true) {
+		status = 'Game over, ' + moveColor + ' is in checkmate.';
+	}
+
+	// draw?
+	else if (game.in_draw() === true) {
+		status = 'Game over, drawn position';
+	}
+
+	// game still on
+	else {
+		status = moveColor + ' to move';
+
+		// check?
+		if (game.in_check() === true) {
+			status += ', ' + moveColor + ' is in check';
+		}
+	}
+	pgnEl.html(index);
+	statusEl.html("PGN: " + game.pgn());
+	// document.getElementById("status").innerhtml =game.pgn();
+	// document.getElementById("hiddenPgn").value = game.pgn();
+};
+
+var cfg = {
+	draggable: false,
+	position: 'start',
+	onDragStart: onDragStart,
+	onDrop: onDrop,
+	onSnapEnd: onSnapEnd
+};
+board = ChessBoard('board', cfg);
+
+$('#btnClear').on('click', board.clear);
+$('#btnStart').on('click', board.start);
+
+
+updateStatus();
+
+function restart() { game.reset(); board.position(game.fen()); updateStatus(); index = 0; }
+
+function takeback() {
+	clearTimeout(varReplay);
+	game.undo();
+	board.position(game.fen());
+	updateStatus();
+}
+
+$(function () {
+	if (window.FileReader) {
+		$('#file1').on('change', function (e) {
+			var file = e.target.files[0];
+			var reader = new FileReader();
+			reader.onload = function (e) {
+				var pgn = reader.result.split(',');
+
+				game.load_pgn(pgn.join('\,'));
+
+				old = game.history();
+				index = old.length;
+
+				board.position(game.fen());
+				updateStatus();
+
+				var headerInfo = game.header();
+			}
+			reader.readAsText(file);
+		});
+	} else {
+		console.log("no support");
+	}
+});
+function showgame() {
+
+	var pgn = document.getElementById("hiddenPgn").value;
+	//alert(pgn);
+	//game.load_pgn(pgn.join('\,'));
+	game.load_pgn(pgn);
+
+	old = game.history();
+	index = old.length;
+
+	board.position(game.fen());
+	updateStatus();
+
+	var headerInfo = game.header();
+
+}
+showgame();
+</script>

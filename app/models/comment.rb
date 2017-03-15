@@ -1,12 +1,7 @@
 class Comment < ApplicationRecord
-  # Direct associations
-
-  belongs_to :user
-
-  belongs_to :game
-
-  # Indirect associations
-
-  # Validations
-
+belongs_to :game
+belongs_to :user
+validates :user_id, :presence => true
+validates :game_id, :presence => true
+validates :body, :presence => true
 end

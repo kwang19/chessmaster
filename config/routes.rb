@@ -1,7 +1,4 @@
 Rails.application.routes.draw do
-  devise_for :admin_users, ActiveAdmin::Devise.config
-  ActiveAdmin.routes(self)
-  root :to => "games#index"
   # Routes for the Gamerating resource:
   # CREATE
   get "/gameratings/new", :controller => "gameratings", :action => "new"
@@ -20,6 +17,7 @@ Rails.application.routes.draw do
   #------------------------------
 
   # Routes for the Comment resource:
+  root "games#index"
   # CREATE
   get "/comments/new", :controller => "comments", :action => "new"
   post "/create_comment", :controller => "comments", :action => "create"
@@ -40,7 +38,7 @@ Rails.application.routes.draw do
   # CREATE
   get "/likes/new", :controller => "likes", :action => "new"
   post "/create_like", :controller => "likes", :action => "create"
-
+  get "/add_like/:user_id/:game_id", :controller => "likes", :action => "add"
   # READ
   get "/likes", :controller => "likes", :action => "index"
   get "/likes/:id", :controller => "likes", :action => "show"
@@ -51,31 +49,37 @@ Rails.application.routes.draw do
 
   # DELETE
   get "/delete_like/:id", :controller => "likes", :action => "destroy"
+  post "/delete_like", :controller => "likes", :action => "destroy"
   #------------------------------
-
-  devise_for :users
-  # Routes for the User resource:
-  # READ
-  get "/users", :controller => "users", :action => "index"
-  get "/users/:id", :controller => "users", :action => "show"
-
 
   # Routes for the Game resource:
   # CREATE
   get "/games/new", :controller => "games", :action => "new"
   post "/create_game", :controller => "games", :action => "create"
-
+  get "/newgame", :controller => "games", :action => "newgame"
   # READ
   get "/games", :controller => "games", :action => "index"
-  get "/games/:id", :controller => "games", :action => "show"
+  get "/mywall", :controller => "games", :action => "mywall"
+  get "/mylikes", :controller => "games", :action => "mylikes"
 
+  get "/games/:id", :controller => "games", :action => "show"
+  get "/games/user/:id", :controller => "games", :action => "showuser"
   # UPDATE
   get "/games/:id/edit", :controller => "games", :action => "edit"
   post "/update_game/:id", :controller => "games", :action => "update"
-
+  get "/editgame", :controller => "games", :action => "editgame"
   # DELETE
   get "/delete_game/:id", :controller => "games", :action => "destroy"
   #------------------------------
+  get "/users", :controller => "users", :action => "index"
+  # get "/users/:id", :controller => "users", :action => "show"
+  devise_for :users
+  get '/chessboard', to: 'chessboard#chessboard'
+  post "/showgame", :controller => "chessboard", :action => "showgame"
+  post "/editgame", :controller => "chessboard", :action => "editgame"
+  post "/savegame", :controller => "chessboard", :action => "savegame"
+  post "/savenewgame", :controller => "chessboard", :action => "savenewgame"
+  get "/showchess", :controller => "chessboard", :action => "show"
 
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 end

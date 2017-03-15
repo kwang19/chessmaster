@@ -5,26 +5,14 @@
 <div class="row">
   <div class="col-md-12 mb-2">
     <dl class="dl-horizontal">
+      <dt>Game</dt>
+      <dd><%= @comment.game_id %></dd>
+
       <dt>Body</dt>
       <dd><%= @comment.body %></dd>
 
       <dt>User</dt>
-      <dd>
-        <% if @comment.user.present? %>
-          <a href="/users/<%= @comment.user_id %>">
-            <%= @comment.user.email %>
-          </a>
-        <% end %>
-      </dd>
-
-      <dt>Game</dt>
-      <dd>
-        <% if @comment.game.present? %>
-          <a href="/games/<%= @comment.game_id %>">
-            <%= @comment.game.pgn %>
-          </a>
-        <% end %>
-      </dd>
+      <dd><%= @comment.user_id %></dd>
 
     </dl>
 
@@ -32,14 +20,12 @@
       <a href="/comments" class="btn btn-primary">
         Back
       </a>
-      <% if current_user == @comment.user %>
-        <a href="/comments/<%= @comment.id %>/edit" class="btn btn-warning">
-          Edit
-        </a>
-        <a href="/delete_comment/<%= @comment.id %>" class="btn btn-danger" rel="nofollow">
-          Delete
-        </a>
-      <% end %>
+      <a href="/comments/<%= @comment.id %>/edit" class="btn btn-warning">
+        Edit
+      </a>
+      <a href="/delete_comment/<%= @comment.id %>" class="btn btn-danger" rel="nofollow">
+        Delete
+      </a>
     </div>
   </div>
 </div>

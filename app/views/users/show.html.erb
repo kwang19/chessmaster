@@ -1,235 +1,30 @@
+<div class="jumbotron">
+  <h3><%= @user.username %></h3>
+</div>
+<% if current_user.id == @user.id %>
 <div class="page-header">
-  <h3>User #<%= @user.id %></h3>
+  <a href="/games/new" class="btn btn-default btn-group-justified"><i class="fa fa-plus" aria-hidden="true"></i></a>
 </div>
-
+<% end%>
 <div class="row">
-  <div class="col-md-12 mb-2">
-    <dl class="dl-horizontal">
-      <dt>Email</dt>
-      <dd><%= @user.email %></dd>
 
-      <dt>Password</dt>
-      <dd><%= @user.password %></dd>
+  <% @user.games.each do |game| %>
+  <div class="col-md-8 col-md-offset-2">
 
-      <dt>Username</dt>
-      <dd><%= @user.username %></dd>
+    <div class="panel panel-default">
+      <div class="panel-heading"><%= User.find_by( :id => game.user_id ).username %></div>
+      <% if current_user.id == game.user_id %>
+      <h3>
+        <a href="/games/<%= game.id %>/edit"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+        <a href="/delete_game/<%= game.id %>"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
+      </h3>
+      <%end%>
 
-      <dt>Fide rating</dt>
-      <dd><%= @user.fide_rating %></dd>
 
-      <dt>Title</dt>
-      <dd><%= @user.title %></dd>
 
-      <dt>Photo</dt>
-      <dd><%= @user.photo %></dd>
-
-      <dt>Dob</dt>
-      <dd><%= @user.dob %></dd>
-
-    </dl>
-
-    <div class="btn-group btn-group-justified">
-      <a href="/users" class="btn btn-primary">
-        Back
-      </a>
+      </div>
     </div>
+
   </div>
-</div>
-
-<!-- A User has many comments -->
-
-<div class="row">
-  <div class="col-md-12">
-    <ul class="list-group">
-      <li class="list-group-item list-group-item-info">
-        Comments
-      </li>
-
-      <% @user.comments.each do |comment| %>
-        <li class="list-group-item">
-          <a href="/comments/<%= comment.id %>">
-            <%= comment.body %>
-          </a>
-          <div class="btn-group btn-group-xs pull-right">
-            <a href="/comments/<%= comment.id %>" class="btn btn-primary">
-              <i class="fa fa-search-plus"></i>
-            </a>
-            <%if current_user == comment.user %>
-              <a href="/comments/<%= comment.id %>/edit" class="btn btn-warning">
-                <i class="fa fa-edit"></i>
-              </a>
-              <a href="/delete_comment/<%= comment.id %>" class="btn btn-danger" rel="nofollow">
-                <i class="fa fa-trash-o"></i>
-              </a>
-            <% end %>
-          </div>
-        </li>
-      <% end %>
-    </ul>
-  </div>
-</div>
-
-<!-- A User has many gameratings -->
-
-<div class="row">
-  <div class="col-md-12">
-    <ul class="list-group">
-      <li class="list-group-item list-group-item-info">
-        Gameratings
-      </li>
-
-      <% @user.gameratings.each do |gamerating| %>
-        <li class="list-group-item">
-          <a href="/gameratings/<%= gamerating.id %>">
-            <%= gamerating.user_id %>
-          </a>
-          <div class="btn-group btn-group-xs pull-right">
-            <a href="/gameratings/<%= gamerating.id %>" class="btn btn-primary">
-              <i class="fa fa-search-plus"></i>
-            </a>
-            <%if current_user == gamerating.user %>
-              <a href="/gameratings/<%= gamerating.id %>/edit" class="btn btn-warning">
-                <i class="fa fa-edit"></i>
-              </a>
-              <a href="/delete_gamerating/<%= gamerating.id %>" class="btn btn-danger" rel="nofollow">
-                <i class="fa fa-trash-o"></i>
-              </a>
-            <% end %>
-          </div>
-        </li>
-      <% end %>
-    </ul>
-  </div>
-</div>
-
-<!-- A User has many likes -->
-
-<div class="row">
-  <div class="col-md-12">
-    <ul class="list-group">
-      <li class="list-group-item list-group-item-info">
-        Likes
-      </li>
-
-      <% @user.likes.each do |like| %>
-        <li class="list-group-item">
-          <a href="/likes/<%= like.id %>">
-            <%= like.user_id %>
-          </a>
-          <div class="btn-group btn-group-xs pull-right">
-            <a href="/likes/<%= like.id %>" class="btn btn-primary">
-              <i class="fa fa-search-plus"></i>
-            </a>
-            <%if current_user == like.user %>
-              <a href="/likes/<%= like.id %>/edit" class="btn btn-warning">
-                <i class="fa fa-edit"></i>
-              </a>
-              <a href="/delete_like/<%= like.id %>" class="btn btn-danger" rel="nofollow">
-                <i class="fa fa-trash-o"></i>
-              </a>
-            <% end %>
-          </div>
-        </li>
-      <% end %>
-    </ul>
-  </div>
-</div>
-
-<!-- A User has many games -->
-
-<div class="row">
-  <div class="col-md-12">
-    <ul class="list-group">
-      <li class="list-group-item list-group-item-info">
-        Games
-      </li>
-
-      <% @user.games.each do |game| %>
-        <li class="list-group-item">
-          <a href="/games/<%= game.id %>">
-            <%= game.pgn %>
-          </a>
-          <div class="btn-group btn-group-xs pull-right">
-            <a href="/games/<%= game.id %>" class="btn btn-primary">
-              <i class="fa fa-search-plus"></i>
-            </a>
-            <%if current_user == game.user %>
-              <a href="/games/<%= game.id %>/edit" class="btn btn-warning">
-                <i class="fa fa-edit"></i>
-              </a>
-              <a href="/delete_game/<%= game.id %>" class="btn btn-danger" rel="nofollow">
-                <i class="fa fa-trash-o"></i>
-              </a>
-            <% end %>
-          </div>
-        </li>
-      <% end %>
-    </ul>
-  </div>
-</div>
-
-<!-- A User has many liked_games -->
-
-<div class="row">
-  <div class="col-md-12">
-    <ul class="list-group">
-      <li class="list-group-item list-group-item-info">
-        Liked Games
-      </li>
-
-      <% @user.liked_games.each do |game| %>
-        <li class="list-group-item">
-          <a href="/games/<%= game.id %>">
-            <%= game.pgn %>
-          </a>
-          <div class="btn-group btn-group-xs pull-right">
-            <a href="/games/<%= game.id %>" class="btn btn-primary">
-              <i class="fa fa-search-plus"></i>
-            </a>
-            <%if current_user == game.user %>
-              <a href="/games/<%= game.id %>/edit" class="btn btn-warning">
-                <i class="fa fa-edit"></i>
-              </a>
-              <a href="/delete_game/<%= game.id %>" class="btn btn-danger" rel="nofollow">
-                <i class="fa fa-trash-o"></i>
-              </a>
-            <% end %>
-          </div>
-        </li>
-      <% end %>
-    </ul>
-  </div>
-</div>
-
-<!-- A User has many commented_games -->
-
-<div class="row">
-  <div class="col-md-12">
-    <ul class="list-group">
-      <li class="list-group-item list-group-item-info">
-        Commented Games
-      </li>
-
-      <% @user.commented_games.each do |game| %>
-        <li class="list-group-item">
-          <a href="/games/<%= game.id %>">
-            <%= game.pgn %>
-          </a>
-          <div class="btn-group btn-group-xs pull-right">
-            <a href="/games/<%= game.id %>" class="btn btn-primary">
-              <i class="fa fa-search-plus"></i>
-            </a>
-            <%if current_user == game.user %>
-              <a href="/games/<%= game.id %>/edit" class="btn btn-warning">
-                <i class="fa fa-edit"></i>
-              </a>
-              <a href="/delete_game/<%= game.id %>" class="btn btn-danger" rel="nofollow">
-                <i class="fa fa-trash-o"></i>
-              </a>
-            <% end %>
-          </div>
-        </li>
-      <% end %>
-    </ul>
-  </div>
+<% end %>
 </div>

@@ -1,17 +1,6 @@
 class CommentsController < ApplicationController
-  before_action :current_user_must_be_comment_user, :only => [:edit, :update, :destroy]
-
-  def current_user_must_be_comment_user
-    comment = Comment.find(params[:id])
-
-    unless current_user == comment.user
-      redirect_to :back, :alert => "You are not authorized for that."
-    end
-  end
-
   def index
-    @q = Comment.ransack(params[:q])
-    @comments = @q.result(:distinct => true).includes(:game, :user).page(params[:page]).per(10)
+    @comments = Comment.all
 
     render("comments/index.html.erb")
   end
@@ -31,21 +20,16 @@ class CommentsController < ApplicationController
   def create
     @comment = Comment.new
 
+    @comment.game_id = params[:game_id]
     @comment.body = params[:body]
     @comment.user_id = params[:user_id]
-    @comment.game_id = params[:game_id]
 
     save_status = @comment.save
-
+    @game = Game.find(params[:game_id])
+		@pgn = @game.pgn
     if save_status == true
-      referer = URI(request.referer).path
-
-      case referer
-      when "/comments/new", "/create_comment"
-        redirect_to("/comments")
-      else
-        redirect_back(:fallback_location => "/", :notice => "Comment created successfully.")
-      end
+      # redirect_to("/comments/#{@comment.id}", :notice => "Comment created successfully.")
+      render("/chessboard/chessboard.html.erb")
     else
       render("comments/new.html.erb")
     end
@@ -60,21 +44,14 @@ class CommentsController < ApplicationController
   def update
     @comment = Comment.find(params[:id])
 
+    @comment.photo_id = params[:photo_id]
     @comment.body = params[:body]
     @comment.user_id = params[:user_id]
-    @comment.game_id = params[:game_id]
 
     save_status = @comment.save
 
     if save_status == true
-      referer = URI(request.referer).path
-
-      case referer
-      when "/comments/#{@comment.id}/edit", "/update_comment"
-        redirect_to("/comments/#{@comment.id}", :notice => "Comment updated successfully.")
-      else
-        redirect_back(:fallback_location => "/", :notice => "Comment updated successfully.")
-      end
+      redirect_to("/comments/#{@comment.id}", :notice => "Comment updated successfully.")
     else
       render("comments/edit.html.erb")
     end
@@ -88,7 +65,7 @@ class CommentsController < ApplicationController
     if URI(request.referer).path == "/comments/#{@comment.id}"
       redirect_to("/", :notice => "Comment deleted.")
     else
-      redirect_back(:fallback_location => "/", :notice => "Comment deleted.")
+      redirect_to(:back, :notice => "Comment deleted.")
     end
   end
 end

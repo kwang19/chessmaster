@@ -1,17 +1,6 @@
 class GameratingsController < ApplicationController
-  before_action :current_user_must_be_gamerating_user, :only => [:edit, :update, :destroy]
-
-  def current_user_must_be_gamerating_user
-    gamerating = Gamerating.find(params[:id])
-
-    unless current_user == gamerating.user
-      redirect_to :back, :alert => "You are not authorized for that."
-    end
-  end
-
   def index
-    @q = Gamerating.ransack(params[:q])
-    @gameratings = @q.result(:distinct => true).includes(:game, :user).page(params[:page]).per(10)
+    @gameratings = Gamerating.all
 
     render("gameratings/index.html.erb")
   end
@@ -32,23 +21,13 @@ class GameratingsController < ApplicationController
     @gamerating = Gamerating.new
 
     @gamerating.user_id = params[:user_id]
-    @gamerating.value = params[:value]
     @gamerating.game_id = params[:game_id]
+    @gamerating.value = params[:value]
 
     save_status = @gamerating.save
+    @game = Game.find(@gamerating.game_id)
 
-    if save_status == true
-      referer = URI(request.referer).path
-
-      case referer
-      when "/gameratings/new", "/create_gamerating"
-        redirect_to("/gameratings")
-      else
-        redirect_back(:fallback_location => "/", :notice => "Gamerating created successfully.")
-      end
-    else
-      render("gameratings/new.html.erb")
-    end
+    render("/chessboard/chessboard.html.erb")
   end
 
   def edit
@@ -59,20 +38,15 @@ class GameratingsController < ApplicationController
 
   def update
     @gamerating = Gamerating.find(params[:id])
-    @gamerating.value = params[:value]
+
+    @gamerating.user_id = params[:user_id]
     @gamerating.game_id = params[:game_id]
+    @gamerating.value = params[:value]
 
     save_status = @gamerating.save
 
     if save_status == true
-      referer = URI(request.referer).path
-
-      case referer
-      when "/gameratings/#{@gamerating.id}/edit", "/update_gamerating"
-        redirect_to("/gameratings/#{@gamerating.id}", :notice => "Gamerating updated successfully.")
-      else
-        redirect_back(:fallback_location => "/", :notice => "Gamerating updated successfully.")
-      end
+      redirect_to("/gameratings/#{@gamerating.id}", :notice => "Gamerating updated successfully.")
     else
       render("gameratings/edit.html.erb")
     end
@@ -86,7 +60,7 @@ class GameratingsController < ApplicationController
     if URI(request.referer).path == "/gameratings/#{@gamerating.id}"
       redirect_to("/", :notice => "Gamerating deleted.")
     else
-      redirect_back(:fallback_location => "/", :notice => "Gamerating deleted.")
+      redirect_to(:back, :notice => "Gamerating deleted.")
     end
   end
 end

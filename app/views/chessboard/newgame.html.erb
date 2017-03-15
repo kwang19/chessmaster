@@ -1,0 +1,296 @@
+<div class="row vertical-divider" style="margin-top: 30px">
+  <div class="col-xs-6">
+      <div>Black: <span id="black1"><%=@game.black%></span></div>
+      <div id="board" style="width: 400px"></div>
+      <div>White: <span id="white1"><%=@game.white%></span></div>
+      <button class="btn btn-primary" onclick='restart()'>
+        Reset
+      </button>
+      <button class="btn btn-primary" onclick='moveback()'>
+        Take Back
+      </button>
+      <p><span id="status"></span></p>
+
+      <input type="hidden" id="hiddenPgn" name="hiddenPgn" value="<%=@game.pgn%>">
+    </div>
+    <div class="col-xs-6">
+      <form action="/create_game" method="post" enctype="multipart/form-data">
+        <!-- Hidden input for authenticity token to protect from forgery -->
+        <input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>">
+        <!-- Validation failure messages -->
+      <% if @game.errors.any? %>
+        <% @game.errors.full_messages.each do |message| %>
+          <div class="alert alert-dismissable alert-danger">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            <%= message %>
+          </div>
+        <% end %>
+      <% end %>
+        <div class="form-group">
+          <label for="pgn" class="control-label">
+            Load a pgn file
+          </label>
+          <input type="file" id="file1" />
+        </div>
+        <!-- Label and input for pgn -->
+        <div class="form-group">
+          <label for="pgn" class="control-label">
+            Pgn
+          </label>
+          <textarea id="pgn" name="pgn" placeholder="Pgn" class="form-control" rows="3"><%= @game.pgn %></textarea>
+        </div>
+
+        <!-- Label and input for eventname -->
+        <div class="form-group">
+          <label for="eventname" class="control-label">
+            Event Name
+          </label>
+
+          <input type="text" id="eventname" name="eventname" placeholder="Eventname" class="form-control" value="<%= @game.eventname %>">
+        </div>
+        <input type="hidden" id="user_id" name="user_id" value="<%=current_user.id%>">
+        <!-- Label and input for eventdate -->
+        <div class="form-group">
+          <label for="eventdate" class="control-label">
+            Event Date
+          </label>
+
+          <input type="text" id="eventdate" name="eventdate" placeholder="Eventdate" class="form-control" value="<%= @game.eventdate %>">
+        </div>
+
+        <!-- Label and input for white -->
+        <div class="form-group">
+          <label for="white" class="control-label">
+            White
+          </label>
+
+          <input type="text" id="white" name="white" placeholder="White" class="form-control" value="<%= @game.white %>">
+        </div>
+
+        <!-- Label and input for black -->
+        <div class="form-group">
+          <label for="black" class="control-label">
+            Black
+          </label>
+
+          <input type="text" id="black" name="black" placeholder="Black" class="form-control" value="<%= @game.black %>">
+        </div>
+
+        <!-- Label and input for result -->
+        <div class="form-group">
+          <label for="result" class="control-label">
+            Result
+          </label>
+
+          <input type="text" id="result" name="result" placeholder="Result" class="form-control" value="<%= @game.result %>">
+        </div>
+
+        <button class="btn btn-success">
+          Save Game
+        </button>
+        or
+        <a href="/games">Cancel</a>
+      </form>
+    </div>
+  </div>
+  <script type="text/javascript">
+  var blitz = 0;
+  var whiteEl=$('#white1'),blackEl=$('#black1'),resultEl=$('#result1') ;
+  var varReplay;
+  var old;
+  var index = 0;
+  var board,
+  game = new Chess(), pgnEl = $('#pgn'),statusEl = $('#status');
+  // do not pick up pieces if the game is over
+  // only pick up pieces for the side to move
+
+
+  var onDragStart = function (source, piece, position, orientation) {
+    if (game.game_over() === true ||
+    (game.turn() === 'w' && piece.search(/^b/) !== -1) ||
+    (game.turn() === 'b' && piece.search(/^w/) !== -1)) {
+      return false;
+    }
+  };
+
+
+  var onDrop = function (source, target) {
+    // see if the move is legal
+    var move = game.move({
+      from: source,
+      to: target,
+      promotion: 'q' // NOTE: always promote to a queen for example simplicity
+    });
+
+    // illegal move
+    if (move === null) return 'snapback';
+
+    updateStatus();
+  };
+
+  // update the board position after the piece snap
+  // for castling, en passant, pawn promotion
+  var onSnapEnd = function () {
+    board.position(game.fen());
+  };
+
+
+  var moveback = function () {
+
+    takeback();
+    if (index > 0)
+    { index--; }
+
+  }
+  var moveforward = function () {
+    clearTimeout(varReplay);
+    game.move(old[index]);
+
+    if (index < old.length)
+    { index++; }
+    board.position(game.fen());
+    updateStatus();
+  }
+  var replayMove = function () {
+
+    if (index == 0) {
+      restart();
+    }
+    //var randomIndex = Math.floor(Math.random() * possibleMoves.length);
+    game.move(old[index]);
+    board.position(game.fen());
+    if (index < old.length)
+    index++;
+
+    updateStatus();
+    varReplay = window.setTimeout(replayMove, 1000);
+
+  };
+
+  var replay = function () {
+    index = 0;
+    restart();
+    replayMove();
+  }
+  var updateStatus = function () {
+    var status = '';
+
+    var moveColor = 'White';
+    if (game.turn() === 'b') {
+      moveColor = 'Black';
+    }
+
+    // checkmate?
+    if (game.in_checkmate() === true) {
+      status = 'Game over, ' + moveColor + ' is in checkmate.';
+    }
+
+    // draw?
+    else if (game.in_draw() === true) {
+      status = 'Game over, drawn position';
+    }
+
+    // game still on
+    else {
+      status = moveColor + ' to move';
+
+      // check?
+      if (game.in_check() === true) {
+        status += ', ' + moveColor + ' is in check';
+      }
+    }
+    pgnEl.html(game.pgn());
+    //document.getElementById("hiddenPgn").value = game.pgn();
+  };
+
+  var cfg = {
+    draggable: true,
+    position: 'start',
+    onDragStart: onDragStart,
+    onDrop: onDrop,
+    onSnapEnd: onSnapEnd
+  };
+  board = ChessBoard('board', cfg);
+
+  $('#btnClear').on('click', board.clear);
+  $('#btnStart').on('click', board.start);
+
+
+  updateStatus();
+
+  function restart() { game.reset(); board.position(game.fen()); updateStatus(); }
+
+  function takeback() {
+    clearTimeout(varReplay);
+    game.undo();
+    board.position(game.fen());
+    updateStatus();
+  }
+
+  $(function () {
+    if (window.FileReader) {
+      $('#file1').on('change', function (e) {
+        var file = e.target.files[0];
+        var reader = new FileReader();
+        reader.onload = function (e) {
+          var pgn = reader.result.split(',');
+
+          game.load_pgn(pgn.join('\,'));
+
+          old = game.history();
+          index = old.length;
+
+          board.position(game.fen());
+          updateStatus();
+
+          var headerInfo = game.header();
+          var moves = game.pgn().substring(game.pgn().lastIndexOf(']')+1);
+
+          document.getElementById("hiddenPgn").value = moves;
+          resultEl.html(headerInfo['Result']);
+          statusEl.html(moves);
+          document.getElementById("result").value = headerInfo['Result'];
+          blackEl.html(headerInfo['Black']);
+          document.getElementById("black").value = headerInfo['Black'];
+          whiteEl.html(headerInfo['White']);
+          document.getElementById("white").value = headerInfo['White'];
+          // document.getElementById("form-white-name").value = headerInfo['White'];
+          document.getElementById("eventdate").value = headerInfo['Date'];
+          document.getElementById("eventname").value = headerInfo['Event'];
+          pgnEl.html(moves);
+          // if (headerInfo['Result'] == '1-0') {
+          // 		document.getElementById("form-result-w").checked = true;
+          // }
+          // else if (headerInfo['Result'] == '0-1') {
+          // 		document.getElementById("form-result-b").checked = true;
+          // }
+          // else {
+          // 		document.getElementById("form-result-d").checked = true;
+          // }
+
+          //$('#textarea1').val(csv.join('\n'));
+        }
+        reader.readAsText(file);
+      });
+    } else {
+      console.log("no support");
+    }
+  });
+  function showgame() {
+
+    var pgn = document.getElementById("hiddenPgn").value;
+    //alert(pgn);
+    //game.load_pgn(pgn.join('\,'));
+    game.load_pgn(pgn);
+
+    old = game.history();
+    index = old.length;
+
+    board.position(game.fen());
+    updateStatus();
+
+    var headerInfo = game.header();
+
+  }
+  showgame();
+  </script>
