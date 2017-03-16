@@ -1,6 +1,6 @@
 # Chessmaster
 
-In this project, user can sign up to upload chess games.
+My final project allows users to view a variety of chess games through interacting with a community of chess players. Users can like and comment on games, giving their opinions on the quality of the games and rate other players games. Users can also upload their own games through uploading pgn files or manually entering the pgn. They can also create their own profile page with avatars. It has pagination function and make it easier to navigate.
 
 ## Steps
 
